@@ -32,4 +32,12 @@ pub mod resource_manager {
     ) -> Result<()> {
         initialize_resource_mint::handler(ctx, resource_kind)
     }
+
+    pub fn mint_resource_to_player(
+        ctx: Context<MintResourceToPlayer>,
+        resource_kind: ResourceKind,
+        amount: u64,
+    ) -> Result<()> {
+        mint_resource_to_player::handler(ctx, resource_kind, amount)
+    }
 }
