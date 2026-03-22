@@ -14,4 +14,6 @@ pub enum GameError {
     InvalidResourceKind,
     #[msg("Not enough token resources for Kozack saber")]
     NotEnoughTokenResourcesForSaber,
+    #[msg("Not enough token resources for Elder staff")]
+    NotEnoughTokenResourcesForStaff,
 }

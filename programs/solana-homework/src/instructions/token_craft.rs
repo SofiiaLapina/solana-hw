@@ -81,3 +81,79 @@ pub fn craft_kozack_saber_with_tokens_demo_handler(
 
     Ok(())
 }
+
+#[derive(Accounts)]
+pub struct CraftElderStaffWithTokensDemo<'info> {
+    #[account(
+        mut,
+        seeds = [b"player", owner.key().as_ref()],
+        bump = player.bump,
+        has_one = owner @ GameError::InvalidPlayerOwner
+    )]
+    pub player: Account<'info, Player>,
+
+    #[account(mut)]
+    pub owner: Signer<'info>,
+
+    #[account(mut)]
+    pub wood_mint: InterfaceAccount<'info, Mint>,
+    #[account(mut)]
+    pub gold_mint: InterfaceAccount<'info, Mint>,
+    #[account(mut)]
+    pub diamond_mint: InterfaceAccount<'info, Mint>,
+
+    #[account(mut)]
+    pub wood_token_account: InterfaceAccount<'info, TokenAccount>,
+    #[account(mut)]
+    pub gold_token_account: InterfaceAccount<'info, TokenAccount>,
+    #[account(mut)]
+    pub diamond_token_account: InterfaceAccount<'info, TokenAccount>,
+
+    pub token_program: Interface<'info, TokenInterface>,
+}
+
+pub fn craft_elder_staff_with_tokens_demo_handler(
+    ctx: Context<CraftElderStaffWithTokensDemo>,
+) -> Result<()> {
+    require!(
+        ctx.accounts.wood_token_account.amount >= 2
+            && ctx.accounts.gold_token_account.amount >= 1
+            && ctx.accounts.diamond_token_account.amount >= 1,
+        GameError::NotEnoughTokenResourcesForStaff
+    );
+
+    let token_program = ctx.accounts.token_program.to_account_info();
+    let owner = ctx.accounts.owner.to_account_info();
+
+    let wood_burn_accounts = BurnChecked {
+        mint: ctx.accounts.wood_mint.to_account_info(),
+        from: ctx.accounts.wood_token_account.to_account_info(),
+        authority: owner.clone(),
+    };
+    let wood_ctx = CpiContext::new(token_program.clone(), wood_burn_accounts);
+    token_interface::burn_checked(wood_ctx, 2, ctx.accounts.wood_mint.decimals)?;
+
+    let gold_burn_accounts = BurnChecked {
+        mint: ctx.accounts.gold_mint.to_account_info(),
+        from: ctx.accounts.gold_token_account.to_account_info(),
+        authority: owner.clone(),
+    };
+    let gold_ctx = CpiContext::new(token_program.clone(), gold_burn_accounts);
+    token_interface::burn_checked(gold_ctx, 1, ctx.accounts.gold_mint.decimals)?;
+
+    let diamond_burn_accounts = BurnChecked {
+        mint: ctx.accounts.diamond_mint.to_account_info(),
+        from: ctx.accounts.diamond_token_account.to_account_info(),
+        authority: owner,
+    };
+    let diamond_ctx = CpiContext::new(token_program, diamond_burn_accounts);
+    token_interface::burn_checked(
+        diamond_ctx,
+        1,
+        ctx.accounts.diamond_mint.decimals,
+    )?;
+
+    ctx.accounts.player.crafted_staffs += 1;
+
+    Ok(())
+}

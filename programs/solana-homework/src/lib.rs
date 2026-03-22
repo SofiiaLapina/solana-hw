@@ -44,6 +44,12 @@ pub mod solana_homework {
         craft_kozack_saber_with_tokens_demo_handler(ctx)
     }
 
+    pub fn craft_elder_staff_with_tokens_demo(
+        ctx: Context<CraftElderStaffWithTokensDemo>,
+    ) -> Result<()> {
+        craft_elder_staff_with_tokens_demo_handler(ctx)
+    }
+
     pub fn grant_demo_saber_recipe(ctx: Context<PlayerOwnerAction>) -> Result<()> {
         grant_demo_saber_recipe_handler(ctx)
     }
