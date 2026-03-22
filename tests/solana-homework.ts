@@ -550,12 +550,30 @@ describe("solana-homework", () => {
       .signers([cpiUser])
       .rpc();
 
-    const woodAta = getAssociatedTokenAddress(cpiUser.publicKey, woodMint.publicKey);
-    const ironAta = getAssociatedTokenAddress(cpiUser.publicKey, ironMint.publicKey);
-    const goldAta = getAssociatedTokenAddress(cpiUser.publicKey, goldMint.publicKey);
-    const leatherAta = getAssociatedTokenAddress(cpiUser.publicKey, leatherMint.publicKey);
-    const stoneAta = getAssociatedTokenAddress(cpiUser.publicKey, stoneMint.publicKey);
-    const diamondAta = getAssociatedTokenAddress(cpiUser.publicKey, diamondMint.publicKey);
+    const woodAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      woodMint.publicKey
+    );
+    const ironAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      ironMint.publicKey
+    );
+    const goldAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      goldMint.publicKey
+    );
+    const leatherAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      leatherMint.publicKey
+    );
+    const stoneAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      stoneMint.publicKey
+    );
+    const diamondAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      diamondMint.publicKey
+    );
 
     await program.methods
       .searchResourcesWithCpiFullDemo()
