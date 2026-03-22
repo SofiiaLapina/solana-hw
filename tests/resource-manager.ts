@@ -16,6 +16,10 @@ describe("resource-manager", () => {
     program.programId
   );
 
+  const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey(
+    "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+  );
+
   it("initializes game config", async () => {
     await program.methods
       .initialize()
@@ -70,5 +74,34 @@ describe("resource-manager", () => {
     expect(gameConfig.leatherMint.toBase58()).to.eq(leatherMint.toBase58());
     expect(gameConfig.stoneMint.toBase58()).to.eq(stoneMint.toBase58());
     expect(gameConfig.diamondMint.toBase58()).to.eq(diamondMint.toBase58());
+  });
+
+  it("initializes wood mint with token-2022", async () => {
+    const woodMint = anchor.web3.Keypair.generate();
+
+    await program.methods
+      .initializeResourceMint({ wood: {} })
+      .accountsPartial({
+        gameConfig: gameConfigPda,
+        authority: authority,
+        mint: woodMint.publicKey,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([woodMint])
+      .rpc();
+
+    const gameConfig = await program.account.gameConfig.fetch(gameConfigPda);
+
+    expect(gameConfig.woodMint.toBase58()).to.eq(woodMint.publicKey.toBase58());
+
+    const mintAccountInfo = await provider.connection.getAccountInfo(
+      woodMint.publicKey
+    );
+
+    expect(mintAccountInfo).to.not.eq(null);
+    expect(mintAccountInfo!.owner.toBase58()).to.eq(
+      TOKEN_2022_PROGRAM_ID.toBase58()
+    );
   });
 });

@@ -25,4 +25,11 @@ pub mod resource_manager {
     ) -> Result<()> {
         set_resource_mints::handler(ctx, params)
     }
+
+    pub fn initialize_resource_mint(
+        ctx: Context<InitializeResourceMint>,
+        resource_kind: ResourceKind,
+    ) -> Result<()> {
+        initialize_resource_mint::handler(ctx, resource_kind)
+    }
 }
