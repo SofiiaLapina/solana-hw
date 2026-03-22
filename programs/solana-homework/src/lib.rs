@@ -28,6 +28,16 @@ pub mod solana_homework {
         search_resources_with_cpi_placeholder_handler(ctx)
     }
 
+    pub fn search_resources_with_cpi_full_demo(
+        ctx: Context<SearchResourcesWithCpiFullDemo>,
+    ) -> Result<()> {
+        search_resources_with_cpi_full_demo_handler(ctx)
+    }
+
+    pub fn mint_wood_via_cpi_demo(ctx: Context<MintWoodViaCpiDemo>) -> Result<()> {
+        mint_wood_via_cpi_demo_handler(ctx)
+    }
+
     pub fn grant_demo_saber_recipe(ctx: Context<PlayerOwnerAction>) -> Result<()> {
         grant_demo_saber_recipe_handler(ctx)
     }

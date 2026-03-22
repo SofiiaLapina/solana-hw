@@ -4,7 +4,7 @@ use anchor_spl::{
     token_interface::{self, Mint, MintTo, TokenAccount, TokenInterface},
 };
 
-use crate::constants::GAME_CONFIG_SEED;
+use crate::constants::{GAME_CONFIG_SEED, MINT_AUTHORITY_SEED};
 use crate::error::ErrorCode;
 use crate::instructions::initialize_resource_mint::ResourceKind;
 use crate::state::GameConfig;
@@ -20,6 +20,13 @@ pub struct MintResourceToPlayer<'info> {
 
     #[account(mut)]
     pub authority: Signer<'info>,
+
+    /// CHECK: PDA mint authority, validated by seeds and bump from game_config.
+    #[account(
+        seeds = [MINT_AUTHORITY_SEED.as_bytes()],
+        bump = game_config.mint_authority_bump
+    )]
+    pub mint_authority: UncheckedAccount<'info>,
 
     #[account(mut)]
     pub player: SystemAccount<'info>,
@@ -61,15 +68,21 @@ pub fn handler(
         ErrorCode::InvalidMintForResource
     );
 
+    let signer_seeds: &[&[&[u8]]] = &[&[
+        MINT_AUTHORITY_SEED.as_bytes(),
+        &[ctx.accounts.game_config.mint_authority_bump],
+    ]];
+
     let cpi_accounts = MintTo {
         mint: ctx.accounts.mint.to_account_info(),
         to: ctx.accounts.player_token_account.to_account_info(),
-        authority: ctx.accounts.authority.to_account_info(),
+        authority: ctx.accounts.mint_authority.to_account_info(),
     };
 
-    let cpi_context = CpiContext::new(
+    let cpi_context = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         cpi_accounts,
+        signer_seeds,
     );
 
     token_interface::mint_to(cpi_context, amount)?;

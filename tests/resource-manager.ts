@@ -16,6 +16,11 @@ describe("resource-manager", () => {
     program.programId
   );
 
+  const [mintAuthorityPda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("mint_authority")],
+    program.programId
+  );
+
   const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey(
     "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
   );
@@ -48,6 +53,7 @@ describe("resource-manager", () => {
 
     expect(gameConfig.authority.toBase58()).to.eq(authority.toBase58());
     expect(gameConfig.bump).to.be.a("number");
+    expect(gameConfig.mintAuthorityBump).to.be.a("number");
 
     expect(gameConfig.woodMint.toBase58()).to.eq(defaultPubkey);
     expect(gameConfig.ironMint.toBase58()).to.eq(defaultPubkey);
@@ -98,6 +104,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: woodMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -131,6 +138,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: ironMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -143,6 +151,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: goldMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -155,6 +164,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: leatherMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -167,6 +177,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: stoneMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -179,6 +190,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: diamondMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -216,6 +228,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: woodMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -233,6 +246,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         player: player.publicKey,
         mint: woodMint.publicKey,
         playerTokenAccount: playerWoodAta,
@@ -275,6 +289,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: woodMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -287,6 +302,7 @@ describe("resource-manager", () => {
       .accountsPartial({
         gameConfig: gameConfigPda,
         authority: authority,
+        mintAuthority: mintAuthorityPda,
         mint: wrongMint.publicKey,
         tokenProgram: TOKEN_2022_PROGRAM_ID,
         systemProgram: anchor.web3.SystemProgram.programId,
@@ -307,6 +323,7 @@ describe("resource-manager", () => {
         .accountsPartial({
           gameConfig: gameConfigPda,
           authority: authority,
+          mintAuthority: mintAuthorityPda,
           player: player.publicKey,
           mint: wrongMint.publicKey,
           playerTokenAccount: playerWrongAta,

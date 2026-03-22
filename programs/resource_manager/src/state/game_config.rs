@@ -4,6 +4,7 @@ use anchor_lang::prelude::*;
 pub struct GameConfig {
     pub authority: Pubkey,
     pub bump: u8,
+    pub mint_authority_bump: u8,
 
     pub wood_mint: Pubkey,
     pub iron_mint: Pubkey,
@@ -14,5 +15,5 @@ pub struct GameConfig {
 }
 
 impl GameConfig {
-    pub const LEN: usize = 32 + 1 + (32 * 6);
+    pub const LEN: usize = 32 + 1 + 1 + (32 * 6);
 }

@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenInterface};
 
-use crate::constants::GAME_CONFIG_SEED;
+use crate::constants::{GAME_CONFIG_SEED, MINT_AUTHORITY_SEED};
 use crate::error::ErrorCode;
 use crate::state::GameConfig;
 
@@ -28,18 +28,26 @@ pub struct InitializeResourceMint<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
 
+    /// CHECK: PDA mint authority, validated by seeds and bump from game_config.
+    #[account(
+        seeds = [MINT_AUTHORITY_SEED.as_bytes()],
+        bump = game_config.mint_authority_bump
+    )]
+    pub mint_authority: UncheckedAccount<'info>,
+
     #[account(
         init,
         payer = authority,
         mint::decimals = 0,
-        mint::authority = authority.key(),
-        mint::freeze_authority = authority.key(),
+        mint::authority = mint_authority,
+        mint::freeze_authority = mint_authority,
     )]
     pub mint: InterfaceAccount<'info, Mint>,
 
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
 }
+
 pub fn handler(
     ctx: Context<InitializeResourceMint>,
     resource_kind: ResourceKind,
