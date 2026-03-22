@@ -6,6 +6,7 @@ resolution = true
 skip-lint = false
 
 [programs.localnet]
+resource_manager = "2aAasvKWcVi9myKRQRrVW1FkesSj89DK2RoENpuyHiWZ"
 solana_homework = "DzYDbDJDqfeapgikiNZJrmT1RcChTHKLaA3XBZYhxprJ"
 
 [registry]
