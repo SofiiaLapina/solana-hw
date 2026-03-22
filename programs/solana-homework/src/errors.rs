@@ -10,4 +10,6 @@ pub enum GameError {
     NotEnoughResourcesForSaber,
     #[msg("Not enough resources for Elder staff")]
     NotEnoughResourcesForStaff,
+    #[msg("Invalid resource kind")]
+    InvalidResourceKind,
 }

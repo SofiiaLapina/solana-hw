@@ -230,4 +230,54 @@ describe("solana-homework", () => {
 
     expect(failed).to.eq(true);
   });
+
+  it("search with cpi placeholder updates timestamp and gives 3 resources", async () => {
+    const cpiUser = anchor.web3.Keypair.generate();
+
+    const signature = await provider.connection.requestAirdrop(
+      cpiUser.publicKey,
+      1_000_000_000
+    );
+    await provider.connection.confirmTransaction(signature);
+
+    const [cpiPlayerPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("player"), cpiUser.publicKey.toBuffer()],
+      program.programId
+    );
+
+    await program.methods
+      .initializePlayer()
+      .accountsPartial({
+        player: cpiPlayerPda,
+        user: cpiUser.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([cpiUser])
+      .rpc();
+
+    await program.methods
+      .searchResourcesWithCpiPlaceholder()
+      .accountsPartial({
+        player: cpiPlayerPda,
+        owner: cpiUser.publicKey,
+        resourceManagerProgram: anchor.web3.Keypair.generate().publicKey,
+        resourceGameConfig: anchor.web3.Keypair.generate().publicKey,
+      })
+      .signers([cpiUser])
+      .rpc();
+
+    const playerAccount = await program.account.player.fetch(cpiPlayerPda);
+
+    expect(playerAccount.lastSearchTimestamp.toNumber()).to.be.greaterThan(0);
+
+    const totalResources =
+      playerAccount.resources.wood.toNumber() +
+      playerAccount.resources.iron.toNumber() +
+      playerAccount.resources.gold.toNumber() +
+      playerAccount.resources.leather.toNumber() +
+      playerAccount.resources.stone.toNumber() +
+      playerAccount.resources.diamond.toNumber();
+
+    expect(totalResources).to.eq(3);
+  });
 });

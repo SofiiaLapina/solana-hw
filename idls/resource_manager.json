@@ -1,0 +1,455 @@
+{
+  "address": "2aAasvKWcVi9myKRQRrVW1FkesSj89DK2RoENpuyHiWZ",
+  "metadata": {
+    "name": "resource_manager",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "initialize",
+      "discriminator": [
+        175,
+        175,
+        109,
+        31,
+        13,
+        152,
+        155,
+        237
+      ],
+      "accounts": [
+        {
+          "name": "game_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initialize_resource_mint",
+      "discriminator": [
+        116,
+        44,
+        26,
+        102,
+        210,
+        148,
+        101,
+        244
+      ],
+      "accounts": [
+        {
+          "name": "game_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "game_config"
+          ]
+        },
+        {
+          "name": "mint",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "resource_kind",
+          "type": {
+            "defined": {
+              "name": "ResourceKind"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "mint_resource_to_player",
+      "discriminator": [
+        0,
+        176,
+        151,
+        142,
+        17,
+        227,
+        228,
+        220
+      ],
+      "accounts": [
+        {
+          "name": "game_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "game_config"
+          ]
+        },
+        {
+          "name": "player",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "player_token_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "player"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "resource_kind",
+          "type": {
+            "defined": {
+              "name": "ResourceKind"
+            }
+          }
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "set_resource_mints",
+      "discriminator": [
+        111,
+        179,
+        202,
+        97,
+        194,
+        50,
+        136,
+        19
+      ],
+      "accounts": [
+        {
+          "name": "game_config",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  103,
+                  97,
+                  109,
+                  101,
+                  95,
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "signer": true,
+          "relations": [
+            "game_config"
+          ]
+        }
+      ],
+      "args": [
+        {
+          "name": "params",
+          "type": {
+            "defined": {
+              "name": "SetResourceMintsParams"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "GameConfig",
+      "discriminator": [
+        45,
+        146,
+        146,
+        33,
+        170,
+        69,
+        96,
+        133
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidMintForResource",
+      "msg": "Invalid mint for selected resource"
+    }
+  ],
+  "types": [
+    {
+      "name": "GameConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "wood_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "iron_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "gold_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "leather_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "stone_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "diamond_mint",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ResourceKind",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Wood"
+          },
+          {
+            "name": "Iron"
+          },
+          {
+            "name": "Gold"
+          },
+          {
+            "name": "Leather"
+          },
+          {
+            "name": "Stone"
+          },
+          {
+            "name": "Diamond"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SetResourceMintsParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wood_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "iron_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "gold_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "leather_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "stone_mint",
+            "type": "pubkey"
+          },
+          {
+            "name": "diamond_mint",
+            "type": "pubkey"
+          }
+        ]
+      }
+    }
+  ],
+  "constants": [
+    {
+      "name": "GAME_CONFIG_SEED",
+      "type": "string",
+      "value": "\"game_config\""
+    }
+  ]
+}

@@ -6,6 +6,8 @@ pub mod state;
 
 use instructions::*;
 
+declare_program!(resource_manager);
+
 declare_id!("DzYDbDJDqfeapgikiNZJrmT1RcChTHKLaA3XBZYhxprJ");
 
 #[program]
@@ -18,6 +20,12 @@ pub mod solana_homework {
 
     pub fn search_resources(ctx: Context<SearchResources>) -> Result<()> {
         search_resources_handler(ctx)
+    }
+
+    pub fn search_resources_with_cpi_placeholder(
+        ctx: Context<SearchResourcesWithCpi>,
+    ) -> Result<()> {
+        search_resources_with_cpi_placeholder_handler(ctx)
     }
 
     pub fn grant_demo_saber_recipe(ctx: Context<PlayerOwnerAction>) -> Result<()> {

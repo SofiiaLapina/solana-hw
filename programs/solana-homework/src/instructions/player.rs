@@ -1,6 +1,10 @@
 use anchor_lang::prelude::*;
 
 use crate::errors::GameError;
+use crate::instructions::resource_bridge::{
+    apply_resource_to_local_balance,
+    map_resource_kind,
+};
 use crate::state::{Player, Resources};
 
 pub fn initialize_player_handler(ctx: Context<InitializePlayer>) -> Result<()> {
@@ -29,16 +33,8 @@ pub fn search_resources_handler(ctx: Context<SearchResources>) -> Result<()> {
 
     for i in 0..3 {
         let resource_id = ((seed + i as u64) % 6) as u8;
-
-        match resource_id {
-            0 => player.resources.wood += 1,
-            1 => player.resources.iron += 1,
-            2 => player.resources.gold += 1,
-            3 => player.resources.leather += 1,
-            4 => player.resources.stone += 1,
-            5 => player.resources.diamond += 1,
-            _ => unreachable!(),
-        }
+        let resource_kind = map_resource_kind(resource_id)?;
+        apply_resource_to_local_balance(&mut player.resources, resource_kind);
     }
 
     player.last_search_timestamp = now;
