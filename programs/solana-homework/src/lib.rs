@@ -38,6 +38,12 @@ pub mod solana_homework {
         mint_wood_via_cpi_demo_handler(ctx)
     }
 
+    pub fn craft_kozack_saber_with_tokens_demo(
+        ctx: Context<CraftKozackSaberWithTokensDemo>,
+    ) -> Result<()> {
+        craft_kozack_saber_with_tokens_demo_handler(ctx)
+    }
+
     pub fn grant_demo_saber_recipe(ctx: Context<PlayerOwnerAction>) -> Result<()> {
         grant_demo_saber_recipe_handler(ctx)
     }

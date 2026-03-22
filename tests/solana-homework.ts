@@ -650,4 +650,176 @@ describe("solana-homework", () => {
     expect(localTotal).to.eq(3);
     expect(tokenTotal).to.eq(3);
   });
+
+  it("crafts kozack saber with real tokens", async () => {
+    const cpiUser = anchor.web3.Keypair.generate();
+
+    const woodMint = anchor.web3.Keypair.generate();
+    const ironMint = anchor.web3.Keypair.generate();
+    const leatherMint = anchor.web3.Keypair.generate();
+
+    const signature = await provider.connection.requestAirdrop(
+      cpiUser.publicKey,
+      1_000_000_000
+    );
+    await provider.connection.confirmTransaction(signature);
+
+    await resourceManagerProgram.methods
+      .initialize()
+      .accountsPartial({
+        gameConfig: resourceGameConfigPda,
+        authority: user,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc()
+      .catch(() => {});
+
+    await resourceManagerProgram.methods
+      .initializeResourceMint({ wood: {} })
+      .accountsPartial({
+        gameConfig: resourceGameConfigPda,
+        authority: user,
+        mintAuthority: mintAuthorityPda,
+        mint: woodMint.publicKey,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([woodMint])
+      .rpc();
+
+    await resourceManagerProgram.methods
+      .initializeResourceMint({ iron: {} })
+      .accountsPartial({
+        gameConfig: resourceGameConfigPda,
+        authority: user,
+        mintAuthority: mintAuthorityPda,
+        mint: ironMint.publicKey,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([ironMint])
+      .rpc();
+
+    await resourceManagerProgram.methods
+      .initializeResourceMint({ leather: {} })
+      .accountsPartial({
+        gameConfig: resourceGameConfigPda,
+        authority: user,
+        mintAuthority: mintAuthorityPda,
+        mint: leatherMint.publicKey,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([leatherMint])
+      .rpc();
+
+    const [cpiPlayerPda] = anchor.web3.PublicKey.findProgramAddressSync(
+      [Buffer.from("player"), cpiUser.publicKey.toBuffer()],
+      program.programId
+    );
+
+    await program.methods
+      .initializePlayer()
+      .accountsPartial({
+        player: cpiPlayerPda,
+        user: cpiUser.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .signers([cpiUser])
+      .rpc();
+
+    const woodAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      woodMint.publicKey
+    );
+    const ironAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      ironMint.publicKey
+    );
+    const leatherAta = getAssociatedTokenAddress(
+      cpiUser.publicKey,
+      leatherMint.publicKey
+    );
+
+    await resourceManagerProgram.methods
+      .mintResourceToPlayer({ wood: {} }, new anchor.BN(1))
+      .accountsPartial({
+        gameConfig: resourceGameConfigPda,
+        authority: user,
+        mintAuthority: mintAuthorityPda,
+        player: cpiUser.publicKey,
+        mint: woodMint.publicKey,
+        playerTokenAccount: woodAta,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    await resourceManagerProgram.methods
+      .mintResourceToPlayer({ iron: {} }, new anchor.BN(3))
+      .accountsPartial({
+        gameConfig: resourceGameConfigPda,
+        authority: user,
+        mintAuthority: mintAuthorityPda,
+        player: cpiUser.publicKey,
+        mint: ironMint.publicKey,
+        playerTokenAccount: ironAta,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    await resourceManagerProgram.methods
+      .mintResourceToPlayer({ leather: {} }, new anchor.BN(1))
+      .accountsPartial({
+        gameConfig: resourceGameConfigPda,
+        authority: user,
+        mintAuthority: mintAuthorityPda,
+        player: cpiUser.publicKey,
+        mint: leatherMint.publicKey,
+        playerTokenAccount: leatherAta,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc();
+
+    const beforeCraft = await program.account.player.fetch(cpiPlayerPda);
+    expect(beforeCraft.craftedSabers.toNumber()).to.eq(0);
+
+    await program.methods
+      .craftKozackSaberWithTokensDemo()
+      .accountsPartial({
+        player: cpiPlayerPda,
+        owner: cpiUser.publicKey,
+        woodMint: woodMint.publicKey,
+        ironMint: ironMint.publicKey,
+        leatherMint: leatherMint.publicKey,
+        woodTokenAccount: woodAta,
+        ironTokenAccount: ironAta,
+        leatherTokenAccount: leatherAta,
+        tokenProgram: TOKEN_2022_PROGRAM_ID,
+      })
+      .signers([cpiUser])
+      .rpc();
+
+    const afterCraft = await program.account.player.fetch(cpiPlayerPda);
+    expect(afterCraft.craftedSabers.toNumber()).to.eq(1);
+
+    const woodBalance = await provider.connection.getTokenAccountBalance(
+      woodAta
+    );
+    const ironBalance = await provider.connection.getTokenAccountBalance(
+      ironAta
+    );
+    const leatherBalance = await provider.connection.getTokenAccountBalance(
+      leatherAta
+    );
+
+    expect(woodBalance.value.amount).to.eq("0");
+    expect(ironBalance.value.amount).to.eq("0");
+    expect(leatherBalance.value.amount).to.eq("0");
+  });
 });
