@@ -90,7 +90,7 @@ describe("marketplace", () => {
 
   async function ensureItemConfigInitialized() {
     await itemNftProgram.methods
-      .initializeItemConfig("Ukrainian Artifacts", "https://example.com/items/")
+      .initializeItemConfig("Ukrainian Artifacts", "https://example.com/items/", marketplacePda)
       .accountsPartial({
         itemConfig: itemConfigPda,
         authority,
@@ -406,6 +406,7 @@ describe("marketplace", () => {
         seller: seller.publicKey,
         itemMint: nft.itemMint,
         listing: listingPda,
+        itemConfig: itemConfigPda,
         itemRecord: nft.itemRecordPda,
         escrowItemTokenAccount,
         metadata: nft.metadata,

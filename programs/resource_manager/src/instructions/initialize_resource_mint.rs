@@ -48,10 +48,7 @@ pub struct InitializeResourceMint<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn handler(
-    ctx: Context<InitializeResourceMint>,
-    resource_kind: ResourceKind,
-) -> Result<()> {
+pub fn handler(ctx: Context<InitializeResourceMint>, resource_kind: ResourceKind) -> Result<()> {
     let game_config = &mut ctx.accounts.game_config;
     let mint_key = ctx.accounts.mint.key();
 

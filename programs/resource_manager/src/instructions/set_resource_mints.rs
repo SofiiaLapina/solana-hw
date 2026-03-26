@@ -27,10 +27,7 @@ pub struct SetResourceMints<'info> {
     pub authority: Signer<'info>,
 }
 
-pub fn handler(
-    ctx: Context<SetResourceMints>,
-    params: SetResourceMintsParams,
-) -> Result<()> {
+pub fn handler(ctx: Context<SetResourceMints>, params: SetResourceMintsParams) -> Result<()> {
     let game_config = &mut ctx.accounts.game_config;
 
     game_config.wood_mint = params.wood_mint;

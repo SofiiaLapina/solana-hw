@@ -17,6 +17,7 @@ describe("solana-homework", () => {
   const resourceManagerProgram =
     anchor.workspace.resourceManager as Program<ResourceManager>;
   const itemNftProgram = anchor.workspace.itemNft as Program<ItemNft>;
+  const marketplaceProgram = anchor.workspace.marketplace as Program<any>;
   const user = provider.wallet.publicKey;
 
   const TOKEN_2022_PROGRAM_ID = new anchor.web3.PublicKey(
@@ -99,6 +100,11 @@ describe("solana-homework", () => {
     itemNftProgram.programId
   );
 
+  const [marketplacePda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("marketplace")],
+    marketplaceProgram.programId
+  );
+
   async function getNextItemRecordPda(owner: anchor.web3.PublicKey) {
     const itemConfig = await itemNftProgram.account.itemConfig.fetch(itemConfigPda);
     const nextItemNumber = itemConfig.itemsMinted.toNumber() + 1;
@@ -138,7 +144,8 @@ describe("solana-homework", () => {
     await itemNftProgram.methods
       .initializeItemConfig(
         "Ukrainian Artifacts",
-        "https://example.com/items"
+        "https://example.com/items",
+        marketplacePda
       )
       .accountsPartial({
         itemConfig: itemConfigPda,

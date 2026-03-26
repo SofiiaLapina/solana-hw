@@ -4,7 +4,7 @@ use anchor_spl::{
     token::{self, Mint as NftMint, Token, TokenAccount as NftTokenAccount, Transfer},
     token_interface::{Mint as MagicMint, TokenAccount as MagicTokenAccount, TokenInterface},
 };
-use item_nft::{self, program::ItemNft, ItemRecord};
+use item_nft::{self, program::ItemNft, ItemConfig, ItemRecord};
 use magic_token::{self, program::MagicToken, MagicTokenConfig};
 
 declare_id!("2zRX5LbkhMEBzwZUnfXTNbCttfNgN6Y8ey188Hz2bPEy");
@@ -14,10 +14,7 @@ pub mod marketplace {
     use super::*;
 
     /// Initializes marketplace config.
-    pub fn initialize_marketplace(
-        ctx: Context<InitializeMarketplace>,
-        fee_bps: u16,
-    ) -> Result<()> {
+    pub fn initialize_marketplace(ctx: Context<InitializeMarketplace>, fee_bps: u16) -> Result<()> {
         let marketplace = &mut ctx.accounts.marketplace;
         marketplace.authority = ctx.accounts.authority.key();
         marketplace.fee_bps = fee_bps;
@@ -26,10 +23,7 @@ pub mod marketplace {
     }
 
     /// Creates a listing and transfers seller NFT into marketplace escrow ATA.
-    pub fn create_listing(
-        ctx: Context<CreateListing>,
-        price: u64,
-    ) -> Result<()> {
+    pub fn create_listing(ctx: Context<CreateListing>, price: u64) -> Result<()> {
         let transfer_ctx = CpiContext::new(
             ctx.accounts.nft_token_program.to_account_info(),
             Transfer {
@@ -56,10 +50,7 @@ pub mod marketplace {
         let listing = &mut ctx.accounts.listing;
         require!(listing.active, MarketplaceError::ListingAlreadyInactive);
 
-        let signer_seeds: &[&[&[u8]]] = &[&[
-            b"marketplace",
-            &[ctx.accounts.marketplace.bump],
-        ]];
+        let signer_seeds: &[&[&[u8]]] = &[&[b"marketplace", &[ctx.accounts.marketplace.bump]]];
 
         let transfer_ctx = CpiContext::new_with_signer(
             ctx.accounts.nft_token_program.to_account_info(),
@@ -84,10 +75,7 @@ pub mod marketplace {
         let listing = &mut ctx.accounts.listing;
         require!(listing.active, MarketplaceError::ListingInactive);
 
-        let signer_seeds: &[&[&[u8]]] = &[&[
-            b"marketplace",
-            &[ctx.accounts.marketplace.bump],
-        ]];
+        let signer_seeds: &[&[&[u8]]] = &[&[b"marketplace", &[ctx.accounts.marketplace.bump]]];
 
         let mint_magic_accounts = magic_token::cpi::accounts::MintMagicToPlayer {
             magic_token_config: ctx.accounts.magic_token_config.to_account_info(),
@@ -110,6 +98,7 @@ pub mod marketplace {
         let burn_item_accounts = item_nft::cpi::accounts::BurnItemRecord {
             authority: ctx.accounts.marketplace.to_account_info(),
             receiver: ctx.accounts.seller.to_account_info(),
+            item_config: ctx.accounts.item_config.to_account_info(),
             item_record: ctx.accounts.item_record.to_account_info(),
             item_mint: ctx.accounts.item_mint.to_account_info(),
             owner_token_account: ctx.accounts.escrow_item_token_account.to_account_info(),
@@ -260,6 +249,14 @@ pub struct BuyListing<'info> {
         constraint = listing.item_mint == item_mint.key() @ MarketplaceError::InvalidItemMint
     )]
     pub listing: Box<Account<'info, Listing>>,
+
+    #[account(
+        seeds = [b"item_config"],
+        bump = item_config.bump,
+        seeds::program = item_nft_program.key(),
+        constraint = item_config.marketplace_authority == marketplace.key()
+    )]
+    pub item_config: Box<Account<'info, ItemConfig>>,
 
     #[account(
         mut,

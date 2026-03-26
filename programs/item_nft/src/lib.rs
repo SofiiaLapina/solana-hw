@@ -16,11 +16,13 @@ pub mod item_nft {
         ctx: Context<InitializeItemConfig>,
         collection_name: String,
         base_uri: String,
+        marketplace_authority: Pubkey,
     ) -> Result<()> {
         let item_config = &mut ctx.accounts.item_config;
         item_config.authority = ctx.accounts.authority.key();
         item_config.collection_name = collection_name;
         item_config.base_uri = base_uri;
+        item_config.marketplace_authority = marketplace_authority;
         item_config.items_minted = 0;
         item_config.bump = ctx.bumps.item_config;
         Ok(())
@@ -68,13 +70,7 @@ pub mod item_nft {
             },
         );
 
-        metadata::create_metadata_accounts_v3(
-            metadata_ctx,
-            metadata_data,
-            true,
-            true,
-            None,
-        )?;
+        metadata::create_metadata_accounts_v3(metadata_ctx, metadata_data, true, true, None)?;
 
         let master_edition_ctx = CpiContext::new(
             ctx.accounts.token_metadata_program.to_account_info(),
@@ -223,6 +219,13 @@ pub struct BurnItemRecord<'info> {
     pub receiver: SystemAccount<'info>,
 
     #[account(
+        seeds = [b"item_config"],
+        bump = item_config.bump,
+        constraint = item_config.marketplace_authority == authority.key()
+    )]
+    pub item_config: Account<'info, ItemConfig>,
+
+    #[account(
         mut,
         constraint = item_record.mint == item_mint.key(),
         constraint = item_record.metadata == metadata.key(),
@@ -236,7 +239,7 @@ pub struct BurnItemRecord<'info> {
     #[account(
         mut,
         constraint = owner_token_account.mint == item_mint.key(),
-        constraint = owner_token_account.owner == authority.key(),
+        constraint = owner_token_account.owner == item_config.marketplace_authority,
         constraint = owner_token_account.amount == 1
     )]
     pub owner_token_account: Account<'info, TokenAccount>,
@@ -254,6 +257,7 @@ pub struct BurnItemRecord<'info> {
 #[derive(InitSpace)]
 pub struct ItemConfig {
     pub authority: Pubkey,
+    pub marketplace_authority: Pubkey,
     #[max_len(64)]
     pub collection_name: String,
     #[max_len(200)]

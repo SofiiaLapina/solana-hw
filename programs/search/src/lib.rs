@@ -41,9 +41,7 @@ pub mod search {
         Ok(())
     }
 
-    pub fn search_resources_with_cpi(
-        ctx: Context<SearchResourcesWithCpi>,
-    ) -> Result<()> {
+    pub fn search_resources_with_cpi(ctx: Context<SearchResourcesWithCpi>) -> Result<()> {
         let player = &mut ctx.accounts.player;
         let clock = Clock::get()?;
         let now = clock.unix_timestamp;
@@ -52,10 +50,7 @@ pub mod search {
             return err!(SearchError::SearchCooldownActive);
         }
 
-        let signer_seeds: &[&[&[u8]]] = &[&[
-            b"search_authority",
-            &[ctx.bumps.search_authority],
-        ]];
+        let signer_seeds: &[&[&[u8]]] = &[&[b"search_authority", &[ctx.bumps.search_authority]]];
 
         for i in 0..3 {
             let resource_id = ((clock.slot + i as u64) % 6) as u8;
@@ -91,8 +86,8 @@ pub mod search {
             let cpi_program = ctx.accounts.resource_manager_program.to_account_info();
             let cpi_accounts = resource_manager::cpi::accounts::MintResourceToPlayer {
                 game_config: ctx.accounts.resource_game_config.to_account_info(),
-                search_authority: ctx.accounts.search_authority.to_account_info(),
-                payer: ctx.accounts.owner.to_account_info(),
+                authority: ctx.accounts.search_authority.to_account_info(),
+
                 player: ctx.accounts.owner.to_account_info(),
                 mint_authority: ctx.accounts.mint_authority.to_account_info(),
                 mint: mint_info,
@@ -121,7 +116,7 @@ pub struct InitializePlayer<'info> {
         seeds = [b"player", user.key().as_ref()],
         bump
     )]
-    pub player: Account<'info, Player>,
+    pub player: Box<Account<'info, Player>>,
 
     #[account(mut)]
     pub user: Signer<'info>,
@@ -137,7 +132,7 @@ pub struct SearchResources<'info> {
         bump = player.bump,
         has_one = owner @ SearchError::InvalidPlayerOwner
     )]
-    pub player: Account<'info, Player>,
+    pub player: Box<Account<'info, Player>>,
 
     pub owner: Signer<'info>,
 }
@@ -150,7 +145,7 @@ pub struct SearchResourcesWithCpi<'info> {
         bump = player.bump,
         has_one = owner @ SearchError::InvalidPlayerOwner
     )]
-    pub player: Account<'info, Player>,
+    pub player: Box<Account<'info, Player>>,
 
     #[account(mut)]
     pub owner: Signer<'info>,
@@ -164,23 +159,29 @@ pub struct SearchResourcesWithCpi<'info> {
 
     pub resource_manager_program: Program<'info, resource_manager::program::ResourceManager>,
 
-    pub resource_game_config: Account<'info, resource_manager::GameConfig>,
+    #[account(
+        seeds = [b"game_config"],
+        bump = resource_game_config.bump,
+        seeds::program = resource_manager_program.key(),
+        constraint = resource_game_config.search_authority == search_authority.key()
+    )]
+    pub resource_game_config: Box<Account<'info, resource_manager::GameConfig>>,
 
     /// CHECK: external resource_manager PDA mint authority.
     pub mint_authority: UncheckedAccount<'info>,
 
     #[account(mut)]
-    pub wood_mint: InterfaceAccount<'info, Mint>,
+    pub wood_mint: Box<InterfaceAccount<'info, Mint>>,
     #[account(mut)]
-    pub iron_mint: InterfaceAccount<'info, Mint>,
+    pub iron_mint: Box<InterfaceAccount<'info, Mint>>,
     #[account(mut)]
-    pub gold_mint: InterfaceAccount<'info, Mint>,
+    pub gold_mint: Box<InterfaceAccount<'info, Mint>>,
     #[account(mut)]
-    pub leather_mint: InterfaceAccount<'info, Mint>,
+    pub leather_mint: Box<InterfaceAccount<'info, Mint>>,
     #[account(mut)]
-    pub stone_mint: InterfaceAccount<'info, Mint>,
+    pub stone_mint: Box<InterfaceAccount<'info, Mint>>,
     #[account(mut)]
-    pub diamond_mint: InterfaceAccount<'info, Mint>,
+    pub diamond_mint: Box<InterfaceAccount<'info, Mint>>,
 
     /// CHECK: ATA may be created by inner CPI in resource_manager.
     #[account(mut)]

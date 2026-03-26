@@ -26,6 +26,13 @@ pub mod resource_manager {
         set_resource_mints::handler(ctx, params)
     }
 
+    pub fn set_search_authority(
+        ctx: Context<SetSearchAuthority>,
+        search_authority: Pubkey,
+    ) -> Result<()> {
+        set_search_authority::handler(ctx, search_authority)
+    }
+
     pub fn initialize_resource_mint(
         ctx: Context<InitializeResourceMint>,
         resource_kind: ResourceKind,
@@ -39,5 +46,13 @@ pub mod resource_manager {
         amount: u64,
     ) -> Result<()> {
         mint_resource_to_player::handler(ctx, resource_kind, amount)
+    }
+
+    pub fn burn_resource_from_player(
+        ctx: Context<BurnResourceFromPlayer>,
+        resource_kind: ResourceKind,
+        amount: u64,
+    ) -> Result<()> {
+        burn_resource_from_player::handler(ctx, resource_kind, amount)
     }
 }

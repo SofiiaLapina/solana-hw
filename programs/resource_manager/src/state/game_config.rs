@@ -3,6 +3,7 @@ use anchor_lang::prelude::*;
 #[account]
 pub struct GameConfig {
     pub authority: Pubkey,
+    pub search_authority: Pubkey,
     pub bump: u8,
     pub mint_authority_bump: u8,
 
@@ -15,5 +16,5 @@ pub struct GameConfig {
 }
 
 impl GameConfig {
-    pub const LEN: usize = 32 + 1 + 1 + (32 * 6);
+    pub const LEN: usize = 32 + 32 + 1 + 1 + (32 * 6);
 }

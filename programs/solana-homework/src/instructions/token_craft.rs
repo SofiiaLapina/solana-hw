@@ -1,16 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token::Token;
-use anchor_spl::token_interface::{
-    self, BurnChecked, Mint, TokenAccount, TokenInterface,
-};
-use item_nft::{
-    self,
-    cpi::accounts::MintItemRecord,
-    program::ItemNft,
-    ItemConfig,
-    ItemKind,
-};
+use anchor_spl::token_interface::{self, BurnChecked, Mint, TokenAccount, TokenInterface};
+use item_nft::{self, cpi::accounts::MintItemRecord, program::ItemNft, ItemConfig, ItemKind};
 
 use crate::errors::GameError;
 use crate::state::Player;
@@ -114,11 +106,7 @@ pub fn craft_kozack_saber_with_tokens_demo_handler(
         authority: owner.clone(),
     };
     let leather_ctx = CpiContext::new(token_program, leather_burn_accounts);
-    token_interface::burn_checked(
-        leather_ctx,
-        1,
-        ctx.accounts.leather_mint.decimals,
-    )?;
+    token_interface::burn_checked(leather_ctx, 1, ctx.accounts.leather_mint.decimals)?;
 
     let next_item_number = ctx.accounts.item_config.items_minted + 1;
     let base_uri = ctx.accounts.item_config.base_uri.clone();
@@ -252,11 +240,7 @@ pub fn craft_elder_staff_with_tokens_demo_handler(
         authority: owner.clone(),
     };
     let diamond_ctx = CpiContext::new(token_program, diamond_burn_accounts);
-    token_interface::burn_checked(
-        diamond_ctx,
-        1,
-        ctx.accounts.diamond_mint.decimals,
-    )?;
+    token_interface::burn_checked(diamond_ctx, 1, ctx.accounts.diamond_mint.decimals)?;
 
     let next_item_number = ctx.accounts.item_config.items_minted + 1;
     let base_uri = ctx.accounts.item_config.base_uri.clone();

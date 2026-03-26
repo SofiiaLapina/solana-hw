@@ -13,8 +13,7 @@ use crate::state::GameConfig;
 pub struct MintResourceToPlayer<'info> {
     #[account(
         seeds = [GAME_CONFIG_SEED.as_bytes()],
-        bump = game_config.bump,
-        has_one = authority @ ErrorCode::Unauthorized
+        bump = game_config.bump
     )]
     pub game_config: Account<'info, GameConfig>,
 
@@ -53,6 +52,12 @@ pub fn handler(
     resource_kind: ResourceKind,
     amount: u64,
 ) -> Result<()> {
+    require!(
+        ctx.accounts.authority.key() == ctx.accounts.game_config.authority
+            || ctx.accounts.authority.key() == ctx.accounts.game_config.search_authority,
+        ErrorCode::Unauthorized
+    );
+
     let expected_mint = match resource_kind {
         ResourceKind::Wood => ctx.accounts.game_config.wood_mint,
         ResourceKind::Iron => ctx.accounts.game_config.iron_mint,

@@ -1,10 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::errors::GameError;
-use crate::instructions::resource_bridge::{
-    apply_resource_to_local_balance,
-    map_resource_kind,
-};
+use crate::instructions::resource_bridge::{apply_resource_to_local_balance, map_resource_kind};
 use crate::state::{Player, Resources};
 
 pub fn initialize_player_handler(ctx: Context<InitializePlayer>) -> Result<()> {
@@ -76,9 +73,7 @@ pub fn craft_kozack_saber_handler(ctx: Context<PlayerOwnerAction>) -> Result<()>
     let player = &mut ctx.accounts.player;
 
     require!(
-        player.resources.iron >= 3
-            && player.resources.wood >= 1
-            && player.resources.leather >= 1,
+        player.resources.iron >= 3 && player.resources.wood >= 1 && player.resources.leather >= 1,
         GameError::NotEnoughResourcesForSaber
     );
 
@@ -94,9 +89,7 @@ pub fn craft_elder_staff_handler(ctx: Context<PlayerOwnerAction>) -> Result<()> 
     let player = &mut ctx.accounts.player;
 
     require!(
-        player.resources.wood >= 2
-            && player.resources.gold >= 1
-            && player.resources.diamond >= 1,
+        player.resources.wood >= 2 && player.resources.gold >= 1 && player.resources.diamond >= 1,
         GameError::NotEnoughResourcesForStaff
     );
 

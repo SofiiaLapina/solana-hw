@@ -4,9 +4,7 @@ use crate::errors::GameError;
 use crate::resource_manager;
 use crate::state::Resources;
 
-pub fn map_resource_kind(
-    resource_id: u8,
-) -> Result<resource_manager::types::ResourceKind> {
+pub fn map_resource_kind(resource_id: u8) -> Result<resource_manager::types::ResourceKind> {
     match resource_id {
         0 => Ok(resource_manager::types::ResourceKind::Wood),
         1 => Ok(resource_manager::types::ResourceKind::Iron),

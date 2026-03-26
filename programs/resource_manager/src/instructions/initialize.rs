@@ -27,6 +27,7 @@ pub fn handler(ctx: Context<Initialize>) -> Result<()> {
         Pubkey::find_program_address(&[MINT_AUTHORITY_SEED.as_bytes()], ctx.program_id);
 
     game_config.authority = ctx.accounts.authority.key();
+    game_config.search_authority = Pubkey::default();
     game_config.bump = ctx.bumps.game_config;
     game_config.mint_authority_bump = mint_authority_bump;
 

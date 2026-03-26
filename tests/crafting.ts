@@ -9,8 +9,13 @@ describe("crafting", () => {
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(provider);
 
+  const highComputeIx = anchor.web3.ComputeBudgetProgram.setComputeUnitLimit({
+    units: 400000,
+  });
+
   const program = anchor.workspace.crafting as Program<Crafting>;
   const itemNftProgram = anchor.workspace.itemNft as Program<ItemNft>;
+  const marketplaceProgram = anchor.workspace.marketplace as Program<any>;
   const resourceManagerProgram =
     anchor.workspace.resourceManager as Program<ResourceManager>;
 
@@ -95,6 +100,11 @@ describe("crafting", () => {
     itemNftProgram.programId
   );
 
+  const [marketplacePda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("marketplace")],
+    marketplaceProgram.programId
+  );
+
   async function ensureResourceManagerInitialized() {
     await resourceManagerProgram.methods
       .initialize()
@@ -111,7 +121,8 @@ describe("crafting", () => {
     await itemNftProgram.methods
       .initializeItemConfig(
         "Ukrainian Artifacts",
-        "https://example.com/items"
+        "https://example.com/items",
+        marketplacePda
       )
       .accountsPartial({
         itemConfig: itemConfigPda,
@@ -247,6 +258,7 @@ describe("crafting", () => {
 
     await program.methods
       .craftKozackSaber()
+      .preInstructions([highComputeIx])
       .accountsPartial({
         player: playerPda,
         owner: user.publicKey,
@@ -340,6 +352,7 @@ describe("crafting", () => {
 
     await program.methods
       .craftElderStaff()
+      .preInstructions([highComputeIx])
       .accountsPartial({
         player: playerPda,
         owner: user.publicKey,

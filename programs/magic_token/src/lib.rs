@@ -50,10 +50,7 @@ pub mod magic_token {
     /// Mints MagicToken to a player token account.
     /// This instruction is intended to be called only from Marketplace CPI,
     /// where Marketplace signs with its PDA.
-    pub fn mint_magic_to_player(
-        ctx: Context<MintMagicToPlayer>,
-        amount: u64,
-    ) -> Result<()> {
+    pub fn mint_magic_to_player(ctx: Context<MintMagicToPlayer>, amount: u64) -> Result<()> {
         let signer_seeds: &[&[&[u8]]] = &[&[
             b"magic_token_config",
             &[ctx.accounts.magic_token_config.bump],

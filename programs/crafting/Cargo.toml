@@ -23,6 +23,7 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
+resource_manager = { path = "../resource_manager", features = ["cpi"] }
 item_nft = { path = "../item_nft", features = ["cpi"] }
 anchor-lang = "0.32.1"
 anchor-spl = "0.32.1"

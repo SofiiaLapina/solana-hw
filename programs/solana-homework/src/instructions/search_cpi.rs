@@ -5,10 +5,7 @@ use anchor_spl::{
 };
 
 use crate::errors::GameError;
-use crate::instructions::resource_bridge::{
-    apply_resource_to_local_balance,
-    map_resource_kind,
-};
+use crate::instructions::resource_bridge::{apply_resource_to_local_balance, map_resource_kind};
 use crate::resource_manager;
 use crate::state::Player;
 

@@ -13,6 +13,7 @@ describe("item-nft", () => {
   anchor.setProvider(provider);
 
   const program = anchor.workspace.itemNft as Program<ItemNft>;
+  const marketplaceProgram = anchor.workspace.marketplace as Program<any>;
   const authority = provider.wallet.publicKey;
 
   const TOKEN_METADATA_PROGRAM_ID = new anchor.web3.PublicKey(
@@ -22,6 +23,11 @@ describe("item-nft", () => {
   const [itemConfigPda] = anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from("item_config")],
     program.programId
+  );
+
+  const [marketplacePda] = anchor.web3.PublicKey.findProgramAddressSync(
+    [Buffer.from("marketplace")],
+    marketplaceProgram.programId
   );
 
   function findMetadataPda(mint: anchor.web3.PublicKey) {
@@ -60,7 +66,8 @@ describe("item-nft", () => {
     await program.methods
       .initializeItemConfig(
         "Ukrainian Artifacts",
-        "https://example.com/items/"
+        "https://example.com/items/",
+        marketplacePda
       )
       .accountsPartial({
         itemConfig: itemConfigPda,
