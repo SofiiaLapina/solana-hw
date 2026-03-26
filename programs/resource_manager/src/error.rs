@@ -6,4 +6,6 @@ pub enum ErrorCode {
     Unauthorized,
     #[msg("Invalid mint for selected resource")]
     InvalidMintForResource,
+    #[msg("Invalid search authority")]
+    InvalidSearchAuthority,
 }

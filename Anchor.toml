@@ -1,12 +1,27 @@
 [toolchain]
 package_manager = "npm"
+anchor_version = "0.32.1"
 
 [features]
 resolution = true
 skip-lint = false
 
 [programs.localnet]
+marketplace = "2zRX5LbkhMEBzwZUnfXTNbCttfNgN6Y8ey188Hz2bPEy"
+magic_token = "EdDnUqbfP5o4qMRzqkcS2BefdKPS45nn4R47ns2toEuq"
+item_nft = "B6wni9FcfnqRUBtAL2NS4ha1B7AhN5MVADBC8qTrec2U"
 resource_manager = "2aAasvKWcVi9myKRQRrVW1FkesSj89DK2RoENpuyHiWZ"
+search = "93hD3pVPe1Ws9GwBW2RViqxr9Kyhv1AFR8xLEGyXRmVK"
+crafting = "5Jn9dMW1F3sfGEiz6qBrYvkAv9AvVG4UrFGaLMt6rn6L"
+solana_homework = "DzYDbDJDqfeapgikiNZJrmT1RcChTHKLaA3XBZYhxprJ"
+
+[programs.devnet]
+marketplace = "2zRX5LbkhMEBzwZUnfXTNbCttfNgN6Y8ey188Hz2bPEy"
+magic_token = "EdDnUqbfP5o4qMRzqkcS2BefdKPS45nn4R47ns2toEuq"
+item_nft = "B6wni9FcfnqRUBtAL2NS4ha1B7AhN5MVADBC8qTrec2U"
+resource_manager = "2aAasvKWcVi9myKRQRrVW1FkesSj89DK2RoENpuyHiWZ"
+search = "93hD3pVPe1Ws9GwBW2RViqxr9Kyhv1AFR8xLEGyXRmVK"
+crafting = "5Jn9dMW1F3sfGEiz6qBrYvkAv9AvVG4UrFGaLMt6rn6L"
 solana_homework = "DzYDbDJDqfeapgikiNZJrmT1RcChTHKLaA3XBZYhxprJ"
 
 [registry]
@@ -18,3 +33,13 @@ wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "npx ts-mocha -p ./tsconfig.json -t 1000000 \"tests/**/*.ts\""
+
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+bind_address = "127.0.0.1"
+[[test.validator.clone]]
+address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+
+[test]
+startup_wait = 30000

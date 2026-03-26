@@ -1,12 +1,12 @@
 [package]
-name = "solana-homework"
+name = "crafting"
 version = "0.1.0"
-description = "Created with Anchor"
+description = "Crafting program"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "solana_homework"
+name = "crafting"
 
 [features]
 default = []
@@ -26,6 +26,3 @@ custom-panic = []
 item_nft = { path = "../item_nft", features = ["cpi"] }
 anchor-lang = "0.32.1"
 anchor-spl = "0.32.1"
-
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

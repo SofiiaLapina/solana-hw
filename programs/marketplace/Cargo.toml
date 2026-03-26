@@ -1,12 +1,12 @@
 [package]
-name = "solana-homework"
+name = "marketplace"
 version = "0.1.0"
-description = "Created with Anchor"
+description = "Marketplace program"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "solana_homework"
+name = "marketplace"
 
 [features]
 default = []
@@ -23,9 +23,10 @@ custom-heap = []
 custom-panic = []
 
 [dependencies]
-item_nft = { path = "../item_nft", features = ["cpi"] }
-anchor-lang = "0.32.1"
+anchor-lang = { version = "0.32.1", features = ["init-if-needed"] }
 anchor-spl = "0.32.1"
+magic_token = { path = "../magic_token", features = ["cpi"] }
+item_nft = { path = "../item_nft", features = ["cpi"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

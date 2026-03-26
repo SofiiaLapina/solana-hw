@@ -25,8 +25,8 @@ pub struct SearchResourcesWithCpi<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
 
-    #[account(mut)]
-    pub resource_authority: Signer<'info>,
+    /// CHECK: passed through to resource_manager; real signing is only possible from search program PDA.
+    pub search_authority: UncheckedAccount<'info>,
 
     pub resource_manager_program: Program<'info, resource_manager::program::ResourceManager>,
 
@@ -63,9 +63,9 @@ pub fn search_resources_with_cpi_placeholder_handler(
 
     let cpi_accounts = resource_manager::cpi::accounts::MintResourceToPlayer {
         game_config: ctx.accounts.resource_game_config.to_account_info(),
-        authority: ctx.accounts.resource_authority.to_account_info(),
-        mint_authority: ctx.accounts.mint_authority.to_account_info(),
+        authority: ctx.accounts.search_authority.to_account_info(),
         player: ctx.accounts.owner.to_account_info(),
+        mint_authority: ctx.accounts.mint_authority.to_account_info(),
         mint: ctx.accounts.resource_mint.to_account_info(),
         player_token_account: ctx.accounts.player_token_account.to_account_info(),
         token_program: ctx.accounts.token_program.to_account_info(),
@@ -104,8 +104,8 @@ pub struct MintWoodViaCpiDemo<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
 
-    #[account(mut)]
-    pub resource_authority: Signer<'info>,
+    /// CHECK: passed through to resource_manager; real signing is only possible from search program PDA.
+    pub search_authority: UncheckedAccount<'info>,
 
     pub resource_manager_program: Program<'info, resource_manager::program::ResourceManager>,
 
@@ -132,9 +132,9 @@ pub fn mint_wood_via_cpi_demo_handler(ctx: Context<MintWoodViaCpiDemo>) -> Resul
 
     let cpi_accounts = resource_manager::cpi::accounts::MintResourceToPlayer {
         game_config: ctx.accounts.resource_game_config.to_account_info(),
-        authority: ctx.accounts.resource_authority.to_account_info(),
-        mint_authority: ctx.accounts.mint_authority.to_account_info(),
+        authority: ctx.accounts.search_authority.to_account_info(),
         player: ctx.accounts.owner.to_account_info(),
+        mint_authority: ctx.accounts.mint_authority.to_account_info(),
         mint: ctx.accounts.resource_mint.to_account_info(),
         player_token_account: ctx.accounts.player_token_account.to_account_info(),
         token_program: ctx.accounts.token_program.to_account_info(),
@@ -166,8 +166,8 @@ pub struct SearchResourcesWithCpiFullDemo<'info> {
     #[account(mut)]
     pub owner: Signer<'info>,
 
-    #[account(mut)]
-    pub resource_authority: Signer<'info>,
+    /// CHECK: passed through to resource_manager; real signing is only possible from search program PDA.
+    pub search_authority: UncheckedAccount<'info>,
 
     pub resource_manager_program: Program<'info, resource_manager::program::ResourceManager>,
 
@@ -260,9 +260,9 @@ pub fn search_resources_with_cpi_full_demo_handler(
 
         let cpi_accounts = resource_manager::cpi::accounts::MintResourceToPlayer {
             game_config: ctx.accounts.resource_game_config.to_account_info(),
-            authority: ctx.accounts.resource_authority.to_account_info(),
-            mint_authority: ctx.accounts.mint_authority.to_account_info(),
+            authority: ctx.accounts.search_authority.to_account_info(),
             player: ctx.accounts.owner.to_account_info(),
+            mint_authority: ctx.accounts.mint_authority.to_account_info(),
             mint: mint_info,
             player_token_account: token_account_info,
             token_program: ctx.accounts.token_program.to_account_info(),
